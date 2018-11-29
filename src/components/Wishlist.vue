@@ -111,7 +111,7 @@ li {
   padding: 0.5em 0;
   clear: both;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 span {
@@ -132,6 +132,7 @@ form {
 form * {
   margin: 0.25em 1em;
   font-size: 20px;
+  font-family: "Avenir LT Std 55 Roman", Helvetica, Arial, sans-serif;
 }
 
 #ludwig {

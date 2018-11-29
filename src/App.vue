@@ -20,11 +20,19 @@ body {
   margin: 0;
 }
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: "Avenir LT Std 55 Roman", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   /*margin-top: 60px;*/
+}
+
+@font-face {
+  font-family: "Avenir LT Std 55 Roman";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Avenir LT Std 55 Roman"),
+    url("assets/AvenirLTStd-Roman.woff") format("woff");
 }
 </style>
