@@ -111,6 +111,7 @@ li {
   padding: 0.5em 0;
   clear: both;
   overflow: hidden;
+  font-size: 16px;
 }
 
 span {
@@ -124,7 +125,6 @@ button {
 }
 
 form {
-  font-size: 24px;
   margin: 0.5em;
   display: grid;
 }
