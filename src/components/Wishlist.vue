@@ -108,6 +108,8 @@ li {
   list-style: none;
   text-align: left;
   margin-left: 0.5em;
+  clear: both;
+  overflow: hidden;
 }
 
 span {
