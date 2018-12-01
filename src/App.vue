@@ -20,7 +20,7 @@ body {
   margin: 0;
 }
 #app {
-  font-family: "Avenir LT Std 55 Roman", Helvetica, Arial, sans-serif;
+  font-family: "Avenir", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -29,7 +29,7 @@ body {
 }
 
 @font-face {
-  font-family: "Avenir LT Std 55 Roman";
+  font-family: "Avenir";
   font-style: normal;
   font-weight: normal;
   src: local("Avenir LT Std 55 Roman"),

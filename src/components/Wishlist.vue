@@ -88,6 +88,12 @@ export default {
         }
       }
     }
+  },
+  created: function() {
+    this.$http.get("/api/wishes").then(function(response) {
+      this.allWishes = response.data;
+      console.log(response.data);
+    });
   }
 };
 </script>
@@ -132,7 +138,10 @@ form {
 form * {
   margin: 0.25em 1em;
   font-size: 20px;
-  font-family: "Avenir LT Std 55 Roman", Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 4px;
 }
 
 #ludwig {
