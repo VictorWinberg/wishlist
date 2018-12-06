@@ -1,9 +1,14 @@
 const Sequelize = require("sequelize");
 const express = require("express");
+const bodyParser = require("body-parser");
 const path = require("path");
 require("dotenv").config();
 
 const app = express();
+
+app.use(express.static(path.resolve(__dirname, "..", "dist")));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const sequelize = new Sequelize(
   process.env.SEQUELIZE_DB,
@@ -21,17 +26,33 @@ const Wish = sequelize.define("wish", {
   name: Sequelize.STRING
 });
 
-Wish.sync({ force: true }).then(() => {
-  Wish.create({ wish: "victor", name: "annie" });
-  Wish.create({ wish: "mer victor", name: "annie" });
-  Wish.create({ wish: "ännu mer victor", name: "annie" });
+Wish.sync().then(() => {
+  Wish.create({ wish: "victor är bäst", name: "annie" });
+  console.log("Logging!");
 });
-
-app.use(express.static(path.resolve(__dirname, "..", "dist")));
 
 app.get("/api", (req, res) => res.send("Hello Server!"));
 
 app.get("/api/wishes", async (req, res) => {
+  const wishes = await Wish.findAll();
+  res.send(wishes);
+});
+
+app.post("/api/wishes", async (req, res) => {
+  const created = await Wish.create({
+    name: req.body.name,
+    wish: req.body.wish
+  });
+  const wishes = await Wish.findAll();
+  res.send(wishes);
+});
+
+app.delete("/api/wishes/:id", async (req, res) => {
+  const deleted = await Wish.destroy({
+    where: {
+      id: req.params.id
+    }
+  });
   const wishes = await Wish.findAll();
   res.send(wishes);
 });

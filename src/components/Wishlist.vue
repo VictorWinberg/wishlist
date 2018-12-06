@@ -64,36 +64,50 @@ export default {
         { name: "mamma" },
         { name: "pappa" }
       ],
-      newWish: { id: 0, name: "", wish: "" },
+      newWish: { /*id: 0,*/ name: "", wish: "" },
       allWishes: []
     };
   },
-  methods: {
-    addWish: function(e) {
-      if (this.newWish.wish.replace(/ /g, "") != "") {
-        this.allWishes.push({
-          id: this.newWish.id,
-          name: this.newWish.name,
-          wish: this.newWish.wish
-        });
-        this.newWish.wish = "";
-        this.newWish.id += 1;
-      }
-      e.preventDefault();
-    },
-    deleteWish: function(id) {
-      for (var i = 0; i < this.allWishes.length; i += 1) {
-        if (this.allWishes[i].id === id) {
-          this.allWishes.splice(i, 1);
-        }
-      }
+  watch: {
+    allWishes: function() {
+      console.log("LOG");
     }
   },
-  created: function() {
-    this.$http.get("/api/wishes").then(function(response) {
-      this.allWishes = response.data;
-      console.log(response.data);
-    });
+  methods: {
+    addWish: async function(e) {
+      e.preventDefault();
+      if (this.newWish.wish.replace(/ /g, "") != "") {
+        const res = await fetch("/api/wishes/", {
+          method: "POST",
+          body: JSON.stringify(this.newWish),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
+        });
+        const wishes = await res.json();
+        this.allWishes = wishes;
+        this.newWish.wish = "";
+      }
+    },
+    deleteWish: async function(id) {
+      const res = await fetch("/api/wishes/" + id, {
+        method: "DELETE"
+      });
+      const wishes = await res.json();
+      this.allWishes = wishes;
+
+      // for (var i = 0; i < this.allWishes.length; i += 1) {
+      //   if (this.allWishes[i].id === id) {
+      //     this.allWishes.splice(i, 1);
+      //   }
+      // }
+    }
+  },
+  created: async function() {
+    const response = await this.$http.get("/api/wishes");
+    this.allWishes = response.data;
+    console.log(response.data);
   }
 };
 </script>
