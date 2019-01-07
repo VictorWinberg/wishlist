@@ -23,11 +23,14 @@ const sequelize = new Sequelize(
 
 const Wish = sequelize.define("wish", {
   wish: Sequelize.STRING,
-  name: Sequelize.STRING
+  name: Sequelize.STRING,
+  bought: { type: Sequelize.BOOLEAN, allowNull: false, defaultValue: false },
+  buyer: Sequelize.STRING
 });
 
 Wish.sync().then(() => {
   Wish.create({ wish: "victor är bäst", name: "annie" });
+  Wish.create({ wish: "kamera", name: "mamma", bought: true, buyer: "annie" });
   console.log("Logging!");
 });
 
@@ -54,6 +57,18 @@ app.delete("/api/wishes/:id", async (req, res) => {
     }
   });
   const wishes = await Wish.findAll();
+  res.send(wishes);
+});
+
+app.post("/api/wishes/:id", async (req, res) => {
+  console.log("HELLO", req.body);
+  const edited = await Wish.update(req.body, {
+    where: {
+      id: req.params.id
+    }
+  });
+  const wishes = await Wish.findAll();
+  console.log(wishes);
   res.send(wishes);
 });
 

@@ -39,12 +39,21 @@
         <h2>{{user.name}}</h2>
         <ul>
           <li
-            v-for="aWish in allWishes"
-            :key="aWish.id"
-            v-if="aWish.name === user.name"
+            v-for="aWish in getUserWishes(user.name)"
+            v-bind:key=aWish.id
           >
-            {{aWish.wish}}
-            <span><button v-on:click="deleteWish(aWish.id)">X</button></span>
+            <span>{{aWish.wish}}</span>
+            <button
+              v-if="user.name === activeUser"
+              v-on:click="deleteWish(aWish.id)"
+            >
+              X
+            </button>
+            <button
+              v-else
+              v-on:click="{buyWish(aWish)}"
+              v-bind:class="{unavailable : aWish.bought, available : !aWish.bought}"
+            ><span v-if="aWish.bought">{{aWish.buyer.charAt(0)}}</span></button>
           </li>
         </ul>
       </div>
@@ -53,6 +62,7 @@
 </template>
 
 <script>
+import { sortBy } from "lodash";
 export default {
   name: "HelloWorld",
   data() {
@@ -64,16 +74,21 @@ export default {
         { name: "mamma" },
         { name: "pappa" }
       ],
-      newWish: { /*id: 0,*/ name: "", wish: "" },
+      activeUser: "simon",
+      newWish: { name: "", wish: "" },
       allWishes: []
     };
   },
-  watch: {
-    allWishes: function() {
-      console.log("LOG");
-    }
-  },
   methods: {
+    getUserWishes: function(name) {
+      var userWishes = [];
+      this.allWishes.forEach(wish => {
+        if (wish.name === name) {
+          userWishes.push(wish);
+        }
+      });
+      return sortBy(userWishes, "id");
+    },
     addWish: async function(e) {
       e.preventDefault();
       if (this.newWish.wish.replace(/ /g, "") != "") {
@@ -96,12 +111,24 @@ export default {
       });
       const wishes = await res.json();
       this.allWishes = wishes;
-
-      // for (var i = 0; i < this.allWishes.length; i += 1) {
-      //   if (this.allWishes[i].id === id) {
-      //     this.allWishes.splice(i, 1);
-      //   }
-      // }
+    },
+    buyWish: async function(wish) {
+      console.log("BUY");
+      if (!wish.bought || wish.buyer === this.activeUser) {
+        const res = await fetch("/api/wishes/" + wish.id, {
+          method: "POST",
+          body: JSON.stringify({
+            bought: !wish.bought,
+            buyer: !wish.bought ? this.activeUser : "NULL"
+          }),
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+          }
+        });
+        const wishes = await res.json();
+        this.allWishes = wishes;
+      }
     }
   },
   created: async function() {
@@ -132,16 +159,29 @@ li {
   clear: both;
   overflow: hidden;
   font-size: 18px;
+  display: flex;
 }
 
 span {
-  float: right;
-  margin-right: 0.5em;
+  width: calc(100% - 30px - 0.5em);
 }
 
 button {
+  border: solid 1px black;
+  margin-right: 0.5em;
   border-radius: 100%;
   font-weight: bold;
+  font-size: 18px;
+  height: 30px;
+  width: 30px;
+}
+
+.available {
+  background-color: #01ff70;
+}
+
+.unavailable {
+  background-color: orangered;
 }
 
 form {
