@@ -74,7 +74,7 @@ export default {
         { name: "mamma" },
         { name: "pappa" }
       ],
-      activeUser: "simon",
+      activeUser: "annie",
       newWish: { name: "", wish: "" },
       allWishes: []
     };
@@ -141,6 +141,7 @@ export default {
 
 <style scoped lang="postcss">
 h2 {
+  text-transform: capitalize;
   font-weight: bold;
   margin: 0;
   padding: 0;
@@ -167,6 +168,7 @@ span {
 }
 
 button {
+  text-transform: uppercase;
   border: solid 1px black;
   margin-right: 0.5em;
   border-radius: 100%;
@@ -199,16 +201,17 @@ form * {
 }
 
 #ludwig {
-  background-color: #7fdbff;
+  background-color: #001f3f;
+  color: hsla(210, 100%, 75%, 1);
 }
 #simon {
-  background-color: #39cccc;
+  background-color: #7fdbff;
 }
 #annie {
-  background-color: #2ecc40;
+  background-color: #39cccc;
 }
 #mamma {
-  background-color: #01ff70;
+  background-color: #2ecc40;
 }
 #pappa {
   background-color: #ffdc00;
