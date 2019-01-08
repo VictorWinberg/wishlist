@@ -2,39 +2,26 @@
   <div>
     <h1>Önskelistor</h1>
     <button
-      class="sign"
+      class="sign out"
       v-if="this.activeUser"
       v-on:click="signOut()"
     >
       <a href="/">Logga ut</a>
     </button>
-    <button
-      class="sign"
-      v-else
+    <span v-else>
+      <p>Du behöver <b>logga in</b> med ditt <b>Google-konto</b> för att kunna se och hantera <b>önskelistor</b>!</p>
+      <button class="sign in">
+        <a href="/auth/google">Logga in</a>
+      </button>
+    </span>
+    <form
+      v-on:submit="addWish"
+      v-if="activeUser"
     >
-      <a href="/auth/google">Logga in</a>
-    </button>
-    <form v-on:submit="addWish">
-      <select v-model="newWish.name">
-        Välj
-        <option
-          value=""
-          disabled
-          selected
-        >
-          Välj namn
-        </option>
-        <option
-          v-for="user in users"
-          :key="user.name"
-        >
-          {{user.name}}
-        </option>
-      </select>
       <input
         type="text"
-        placeholder="Vad önskar du dig..."
-        v-model="newWish.wish"
+        v-bind:placeholder="placeholder"
+        v-model="newWish"
       />
       <input
         type="submit"
@@ -77,7 +64,7 @@
 </template>
 
 <script>
-import { sortBy } from "lodash";
+import { sortBy, capitalize } from "lodash";
 export default {
   name: "HelloWorld",
   data() {
@@ -90,9 +77,16 @@ export default {
         { name: "pappa" }
       ],
       activeUser: this.$cookie.get("name"),
-      newWish: { name: "", wish: "" },
+      newWish: "",
       allWishes: []
     };
+  },
+  computed: {
+    placeholder: function() {
+      return " Vad önskar du dig "
+        .concat(capitalize(this.activeUser))
+        .concat("?");
+    }
   },
   methods: {
     signOut: function() {
@@ -109,10 +103,13 @@ export default {
     },
     addWish: async function(e) {
       e.preventDefault();
-      if (this.newWish.wish.replace(/ /g, "") != "") {
+      if (this.newWish.replace(/ /g, "") != "") {
         const res = await fetch("/api/wishes/", {
           method: "POST",
-          body: JSON.stringify(this.newWish),
+          body: JSON.stringify({
+            wish: this.newWish,
+            name: this.activeUser
+          }),
           credentials: "include",
           headers: {
             Accept: "application/json",
@@ -121,7 +118,7 @@ export default {
         });
         const wishes = await res.json();
         this.allWishes = wishes;
-        this.newWish.wish = "";
+        this.newWish = "";
       }
     },
     deleteWish: async function(id) {
@@ -174,10 +171,24 @@ h2 {
 .sign {
   background-color: transparent;
   border-radius: 10%;
-  position: absolute;
   font-size: 14px;
+}
+
+.out {
+  position: absolute;
   right: 0.5em;
   top: 0.5em;
+}
+
+.in {
+  font-size: 20px;
+  margin-bottom: 1em;
+  padding: 0.5em 2em;
+}
+
+.sign a {
+  text-decoration: none;
+  color: black;
 }
 
 ul {
@@ -260,8 +271,8 @@ form * {
   }
 
   form * {
-    width: 25%;
-    max-width: 200px;
+    width: 40%;
+    max-width: 300px;
   }
 
   .user {
