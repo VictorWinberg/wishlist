@@ -14,6 +14,10 @@ module.exports = {
       "/api": {
         target: "http://localhost:3008",
         changeOrigin: true
+      },
+      "/auth": {
+        target: "ttp://localhost:3008",
+        changeOrigin: true
       }
     },
 

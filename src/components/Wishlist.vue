@@ -1,6 +1,19 @@
 <template>
   <div>
     <h1>Önskelistor</h1>
+    <button
+      class="sign"
+      v-if="this.activeUser"
+      v-on:click="signOut()"
+    >
+      <a href="/">Logga ut</a>
+    </button>
+    <button
+      class="sign"
+      v-else
+    >
+      <a href="/auth/google">Logga in</a>
+    </button>
     <form v-on:submit="addWish">
       <select v-model="newWish.name">
         Välj
@@ -37,19 +50,21 @@
         class="user"
       >
         <h2>{{user.name}}</h2>
-        <ul>
+        <ul v-if="activeUser">
           <li
             v-for="aWish in getUserWishes(user.name)"
             v-bind:key=aWish.id
           >
             <span>{{aWish.wish}}</span>
             <button
+              class="round"
               v-if="user.name === activeUser"
               v-on:click="deleteWish(aWish.id)"
             >
               X
             </button>
             <button
+              class="round"
               v-else
               v-on:click="{buyWish(aWish)}"
               v-bind:class="{unavailable : aWish.bought, available : !aWish.bought}"
@@ -74,12 +89,15 @@ export default {
         { name: "mamma" },
         { name: "pappa" }
       ],
-      activeUser: "annie",
+      activeUser: this.$cookie.get("name"),
       newWish: { name: "", wish: "" },
       allWishes: []
     };
   },
   methods: {
+    signOut: function() {
+      activeUser: this.$cookie.delete("name");
+    },
     getUserWishes: function(name) {
       var userWishes = [];
       this.allWishes.forEach(wish => {
@@ -95,6 +113,7 @@ export default {
         const res = await fetch("/api/wishes/", {
           method: "POST",
           body: JSON.stringify(this.newWish),
+          credentials: "include",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json"
@@ -107,7 +126,8 @@ export default {
     },
     deleteWish: async function(id) {
       const res = await fetch("/api/wishes/" + id, {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: "include"
       });
       const wishes = await res.json();
       this.allWishes = wishes;
@@ -117,9 +137,10 @@ export default {
       if (!wish.bought || wish.buyer === this.activeUser) {
         const res = await fetch("/api/wishes/" + wish.id, {
           method: "POST",
+          credentials: "include",
           body: JSON.stringify({
             bought: !wish.bought,
-            buyer: !wish.bought ? this.activeUser : "NULL"
+            buyer: !wish.bought ? this.activeUser : ""
           }),
           headers: {
             Accept: "application/json",
@@ -132,8 +153,11 @@ export default {
     }
   },
   created: async function() {
-    const response = await this.$http.get("/api/wishes");
+    const response = await this.$http.get("/api/wishes", {
+      credentials: "include"
+    });
     this.allWishes = response.data;
+    console.log("user", this.activeUser);
     console.log(response.data);
   }
 };
@@ -145,6 +169,15 @@ h2 {
   font-weight: bold;
   margin: 0;
   padding: 0;
+}
+
+.sign {
+  background-color: transparent;
+  border-radius: 10%;
+  position: absolute;
+  font-size: 14px;
+  right: 0.5em;
+  top: 0.5em;
 }
 
 ul {
@@ -167,7 +200,7 @@ span {
   width: calc(100% - 30px - 0.5em);
 }
 
-button {
+.round {
   text-transform: uppercase;
   border: solid 1px black;
   margin-right: 0.5em;

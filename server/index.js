@@ -2,6 +2,11 @@ const Sequelize = require("sequelize");
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+const { find } = require("lodash");
+const cookieParser = require("cookie-parser");
+const session = require("cookie-session");
 require("dotenv").config();
 
 const app = express();
@@ -9,6 +14,10 @@ const app = express();
 app.use(express.static(path.resolve(__dirname, "..", "dist")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(session({ secret: process.env.SESSION_SECRET }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 const sequelize = new Sequelize(
   process.env.SEQUELIZE_DB,
@@ -33,6 +42,61 @@ Wish.sync().then(() => {
   Wish.create({ wish: "kamera", name: "mamma", bought: true, buyer: "annie" });
   console.log("Logging!");
 });
+
+passport.serializeUser(function(user, done) {
+  done(null, user.name);
+});
+
+passport.deserializeUser(function(name, done) {
+  done(null, { name });
+});
+
+// Use the GoogleStrategy within Passport.
+//   Strategies in Passport require a `verify` function, which accept
+//   credentials (in this case, an accessToken, refreshToken, and Google
+//   profile), and invoke a callback with a user object.
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "http://localhost:8080/auth/google/callback"
+    },
+
+    function(accessToken, refreshToken, profile, done) {
+      const users = [
+        { name: "ludwig", email: "ludwig.onnered@gmail.com" },
+        { name: "simon", email: "dic14aon@student.lu.se" },
+        { name: "annie", email: "annie.onnered@gmail.com" },
+        { name: "mamma", email: "gunnel.onnered@gmail.com" },
+        { name: "pappa", email: "hbgjolu@gmail.com" }
+      ];
+      const user = find(users, { email: profile.emails[0].value });
+      if (user) {
+        return done(null, user);
+      }
+      return done({ success: false, message: "401 Unauthorized" });
+    }
+  )
+);
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"] // ["https://www.googleapis.com/auth/plus.login"]
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function(req, res) {
+    res.cookie("name", req.user.name);
+    res.redirect("/");
+  }
+);
+
+app.get("/auth/me", (req, res) => res.send(req.user));
 
 app.get("/api", (req, res) => res.send("Hello Server!"));
 
