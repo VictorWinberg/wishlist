@@ -1,13 +1,17 @@
 <template>
   <div>
     <h1>Önskelistor</h1>
-    <button
-      class="sign out"
+    <a
+      href="/"
       v-if="this.activeUser"
       v-on:click="signOut()"
     >
-      <a href="/">Logga ut</a>
-    </button>
+      <img
+        id="power"
+        src="../assets/power.svg"
+      />
+      <button class="sign out">Logga ut</button>
+    </a>
     <span v-else>
       <p>Du behöver <b>logga in</b> med ditt <b>Google-konto</b> för att kunna se och hantera <b>önskelistor</b>!</p>
       <button class="sign in">
@@ -66,7 +70,7 @@
 <script>
 import { sortBy, capitalize } from "lodash";
 export default {
-  name: "HelloWorld",
+  name: "Wishlist",
   data() {
     return {
       activeUser: this.$cookie.get("name"),
@@ -152,11 +156,7 @@ export default {
     const res2 = await this.$http.get("/api/users", {
       credentials: "include"
     });
-
     this.users = sortBy(res2.data, "id");
-    console.log("response: ", res2.data);
-    console.log(res1.data);
-    console.log("user", this.activeUser);
   }
 };
 </script>
@@ -175,10 +175,17 @@ h2 {
   font-size: 14px;
 }
 
-.out {
+#power {
   position: absolute;
+  cursor: pointer;
   right: 0.5em;
   top: 0.5em;
+  height: 25px;
+  width: 25px;
+}
+
+.out {
+  display: none;
 }
 
 .in {
@@ -278,6 +285,17 @@ form * {
 
   .user {
     width: 20%;
+  }
+
+  .out {
+    display: initial;
+    position: absolute;
+    right: 0.5em;
+    top: 0.5em;
+  }
+
+  #power {
+    display: none;
   }
 }
 </style>
