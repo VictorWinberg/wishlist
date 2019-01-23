@@ -69,14 +69,8 @@ export default {
   name: "HelloWorld",
   data() {
     return {
-      users: [
-        { name: "ludwig" },
-        { name: "simon" },
-        { name: "annie" },
-        { name: "mamma" },
-        { name: "pappa" }
-      ],
       activeUser: this.$cookie.get("name"),
+      users: [],
       newWish: "",
       allWishes: []
     };
@@ -150,12 +144,19 @@ export default {
     }
   },
   created: async function() {
-    const response = await this.$http.get("/api/wishes", {
+    const res1 = await this.$http.get("/api/wishes", {
       credentials: "include"
     });
-    this.allWishes = response.data;
+    this.allWishes = res1.data;
+
+    const res2 = await this.$http.get("/api/users", {
+      credentials: "include"
+    });
+
+    this.users = sortBy(res2.data, "id");
+    console.log("response: ", res2.data);
+    console.log(res1.data);
     console.log("user", this.activeUser);
-    console.log(response.data);
   }
 };
 </script>

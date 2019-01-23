@@ -37,9 +37,13 @@ const Wish = sequelize.define("wish", {
   buyer: Sequelize.STRING
 });
 
+const User = sequelize.define("user", {
+  name: Sequelize.STRING,
+  email: Sequelize.STRING
+});
+
 Wish.sync().then(() => {
   Wish.create({ wish: "victor är bäst", name: "annie" });
-  Wish.create({ wish: "kamera", name: "mamma", bought: true, buyer: "annie" });
   console.log("Logging!");
 });
 
@@ -63,14 +67,8 @@ passport.use(
       callbackURL: "http://localhost:8080/auth/google/callback"
     },
 
-    function(accessToken, refreshToken, profile, done) {
-      const users = [
-        { name: "ludwig", email: "ludwig.onnered@gmail.com" },
-        { name: "simon", email: "dic14aon@student.lu.se" },
-        { name: "annie", email: "annie.onnered@gmail.com" },
-        { name: "mamma", email: "gunnel.onnered@gmail.com" },
-        { name: "pappa", email: "hbgjolu@gmail.com" }
-      ];
+    async function(accessToken, refreshToken, profile, done) {
+      const users = await User.findAll();
       const user = find(users, { email: profile.emails[0].value });
       if (user) {
         return done(null, user);
@@ -103,6 +101,11 @@ app.get("/api", (req, res) => res.send("Hello Server!"));
 app.get("/api/wishes", async (req, res) => {
   const wishes = await Wish.findAll();
   res.send(wishes);
+});
+
+app.get("/api/users", async (req, res) => {
+  const users = await User.findAll();
+  res.send(users);
 });
 
 app.post("/api/wishes", async (req, res) => {
