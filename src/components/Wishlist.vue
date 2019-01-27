@@ -46,13 +46,19 @@
             v-for="aWish in getUserWishes(user.name)"
             v-bind:key=aWish.id
           >
-            <span>{{aWish.wish}}</span>
+            <span
+              v-bind:class="{active : activeUser === user.name}"
+              v-on:click="activeUser === user.name ? null : null"
+            >{{aWish.wish}}</span>
             <button
               class="round"
               v-if="user.name === activeUser"
               v-on:click="deleteWish(aWish.id)"
             >
-              X
+              <img
+                id="close"
+                src="../assets/cross.svg"
+              />
             </button>
             <button
               class="round"
@@ -184,6 +190,11 @@ h2 {
   width: 25px;
 }
 
+#close {
+  height: 100%;
+  width: 100%;
+}
+
 .out {
   display: none;
 }
@@ -219,7 +230,12 @@ span {
   width: calc(100% - 30px - 0.5em);
 }
 
+.active {
+  cursor: pointer;
+}
+
 .round {
+  background-color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   border: solid 1px black;
   margin-right: 0.5em;

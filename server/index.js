@@ -43,7 +43,6 @@ const User = sequelize.define("user", {
 });
 
 Wish.sync().then(() => {
-  Wish.create({ wish: "victor är bäst", name: "annie" });
   console.log("Logging!");
 });
 
