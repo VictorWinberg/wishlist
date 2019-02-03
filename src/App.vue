@@ -1,16 +1,22 @@
 <template>
   <div id="app">
+    <Header />
+    <Form />
     <Wishlist />
     <modals-container />
   </div>
 </template>
 
 <script>
+import Header from "./components/Header";
+import Form from "./components/Form";
 import Wishlist from "./components/Wishlist";
 
 export default {
   name: "App",
   components: {
+    Header,
+    Form,
     Wishlist
   }
 };
@@ -21,12 +27,11 @@ body {
   margin: 0;
 }
 #app {
+  text-align: center;
   font-family: "Avenir", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  /*margin-top: 60px;*/
 }
 
 @font-face {

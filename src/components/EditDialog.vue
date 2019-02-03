@@ -51,7 +51,7 @@ export default {
       });
       const wishes = await res.json();
       this.$store.state.allWishes = wishes;
-      this.$emit("close");
+      this.close();
     }
   }
 };
