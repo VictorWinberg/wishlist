@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <Wishlist />
+    <modals-container />
   </div>
 </template>
 

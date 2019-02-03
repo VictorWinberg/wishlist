@@ -48,7 +48,7 @@
           >
             <span
               v-bind:class="{active : activeUser === user.name}"
-              v-on:click="activeUser === user.name ? null : null"
+              v-on:click="activeUser === user.name ? edit(aWish) : null"
             >{{aWish.wish}}</span>
             <button
               class="round"
@@ -75,21 +75,31 @@
 
 <script>
 import { sortBy, capitalize } from "lodash";
+import Form from "./Form.vue";
+import Modal from "./Modal.vue";
 export default {
   name: "Wishlist",
   data() {
     return {
       activeUser: this.$cookie.get("name"),
-      users: [],
-      newWish: "",
-      allWishes: []
+      newWish: ""
     };
+  },
+  components: {
+    Form,
+    Modal
   },
   computed: {
     placeholder: function() {
       return " Vad önskar du dig "
         .concat(capitalize(this.activeUser))
         .concat("?");
+    },
+    users: function() {
+      return this.$store.state.users;
+    },
+    allWishes: function() {
+      return this.$store.state.allWishes;
     }
   },
   methods: {
@@ -121,7 +131,7 @@ export default {
           }
         });
         const wishes = await res.json();
-        this.allWishes = wishes;
+        this.$store.state.allWishes = wishes;
         this.newWish = "";
       }
     },
@@ -131,7 +141,7 @@ export default {
         credentials: "include"
       });
       const wishes = await res.json();
-      this.allWishes = wishes;
+      this.$store.state.allWishes = wishes;
     },
     buyWish: async function(wish) {
       console.log("BUY");
@@ -149,20 +159,38 @@ export default {
           }
         });
         const wishes = await res.json();
-        this.allWishes = wishes;
+        this.$store.state.allWishes = wishes;
       }
+    },
+    edit: function(wish) {
+      console.log("I am triggered");
+      this.$modal.show(
+        Modal,
+        {
+          wish: wish
+        },
+        {
+          width: "100%"
+        },
+        {
+          maxWidth: "300px"
+        },
+        {
+          draggable: false
+        }
+      );
     }
   },
   created: async function() {
     const res1 = await this.$http.get("/api/wishes", {
       credentials: "include"
     });
-    this.allWishes = res1.data;
+    this.$store.state.allWishes = res1.data;
 
     const res2 = await this.$http.get("/api/users", {
       credentials: "include"
     });
-    this.users = sortBy(res2.data, "id");
+    this.$store.state.users = sortBy(res2.data, "id");
   }
 };
 </script>
