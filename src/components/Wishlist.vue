@@ -170,13 +170,11 @@ export default {
           wish: wish
         },
         {
-          width: "100%"
-        },
-        {
-          maxWidth: "300px"
-        },
-        {
-          draggable: false
+          width: "100%",
+          maxWidth: "300px",
+          draggable: false,
+          clickToClose: true,
+          height: "auto"
         }
       );
     }
