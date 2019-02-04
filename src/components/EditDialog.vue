@@ -11,7 +11,7 @@
           id="save"
           type="button"
           v-on:click="save()"
-          value=save
+          value=spara
         />
         <input
           type="button"
