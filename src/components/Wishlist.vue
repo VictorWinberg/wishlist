@@ -105,7 +105,6 @@ export default {
         },
         {
           width: "100%",
-          maxWidth: 300,
           draggable: false,
           clickToClose: true,
           height: "auto"

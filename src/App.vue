@@ -34,6 +34,11 @@ body {
   color: #2c3e50;
 }
 
+.v--modal {
+  margin: 0px auto;
+  max-width: 500px;
+}
+
 @font-face {
   font-family: "Avenir";
   font-style: normal;
