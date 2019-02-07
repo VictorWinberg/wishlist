@@ -4,6 +4,7 @@
     <form>
       <input
         type="text"
+        ref="input"
         v-model=editWish
       />
       <span class="btns">
@@ -52,6 +53,11 @@ export default {
       this.$store.state.allWishes = wishes;
       this.close();
     }
+  },
+  created: function() {
+    this.$nextTick(function() {
+      this.$refs.input.focus();
+    });
   }
 };
 </script>
