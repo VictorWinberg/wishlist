@@ -37,6 +37,10 @@ export default {
 </script>
 
 <style scoped>
+p {
+  margin: 0.5em;
+}
+
 .sign {
   background-color: transparent;
   border-radius: 10%;
@@ -60,6 +64,8 @@ export default {
   font-size: 20px;
   margin-bottom: 1em;
   padding: 0.5em 2em;
+  border: solid black 1px;
+  border-radius: 10px;
 }
 
 .sign a {

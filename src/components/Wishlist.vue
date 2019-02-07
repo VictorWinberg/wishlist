@@ -171,8 +171,9 @@ span {
   border-radius: 100%;
   font-weight: bold;
   font-size: 18px;
-  height: 30px;
-  width: 30px;
+  height: 2em;
+  width: 2em;
+  outline: none;
 }
 
 .available {
