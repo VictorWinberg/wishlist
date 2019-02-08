@@ -54,10 +54,8 @@ export default {
       this.close();
     }
   },
-  created: function() {
-    this.$nextTick(function() {
-      this.$refs.input.focus();
-    });
+  mounted: function() {
+    this.$refs.input.focus();
   }
 };
 </script>
@@ -90,6 +88,10 @@ input[type="text"] {
   border: 1px solid black;
   border-radius: 4px;
   padding: 0.2em;
+}
+
+input[type="text"]:focus {
+  outline-color: #4db3ff;
 }
 
 input[type="button"] {
