@@ -42,15 +42,15 @@ const User = sequelize.define("user", {
   email: Sequelize.STRING
 });
 
-Wish.sync().then(() => {
+Wish.sync({ force: true }).then(() => {
   console.log("Logging!");
 });
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user.name);
 });
 
-passport.deserializeUser(function(name, done) {
+passport.deserializeUser(function (name, done) {
   done(null, { name });
 });
 
@@ -66,7 +66,7 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL
     },
 
-    async function(accessToken, refreshToken, profile, done) {
+    async function (accessToken, refreshToken, profile, done) {
       const users = await User.findAll();
       const user = find(users, { email: profile.emails[0].value });
       if (user) {
@@ -87,7 +87,7 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
-  function(req, res) {
+  function (req, res) {
     res.cookie("name", req.user.name);
     res.redirect("/");
   }
