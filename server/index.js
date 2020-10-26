@@ -42,7 +42,7 @@ const User = sequelize.define("user", {
   email: Sequelize.STRING
 });
 
-Wish.sync({ force: true }).then(() => {
+Wish.sync().then(() => {
   console.log("Logging!");
 });
 
