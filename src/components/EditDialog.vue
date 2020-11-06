@@ -67,13 +67,13 @@ export default {
 
 <style scoped>
 main {
-    padding: 1em;
+    padding: 2em 1em;
 }
 
 .closeBtn {
     position: absolute;
-    top: -15px;
-    right: 0;
+    top: 0.25em;
+    right: 0.25em;
     border: solid black 1px;
     border-radius: 50%;
     height: 40px;
