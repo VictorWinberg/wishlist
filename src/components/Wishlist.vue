@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main id="main">
         <div
             v-for="user in users"
             :key="user.name"
@@ -12,20 +12,13 @@
                 <li
                     v-for="aWish in getUserWishes(user.name)"
                     v-bind:key="aWish.id"
+                    v-on:click="activeUser === user.name ? edit(aWish) : null"
                 >
-                    <span
-                        v-bind:class="{ active: activeUser === user.name }"
-                        v-on:click="
-                            activeUser === user.name ? edit(aWish) : null
-                        "
-                        >{{ aWish.wish }}</span
-                    >
-                    <button
-                        class="round"
-                        v-if="user.name === activeUser"
-                        v-on:click="deleteWish(aWish.id)"
-                    >
-                        <img id="close" src="../assets/cross.svg" />
+                    <span v-bind:class="{ active: activeUser === user.name }">
+                        {{ aWish.wish }}
+                    </span>
+                    <button class="round edit" v-if="user.name === activeUser">
+                        <img id="close" src="../assets/edit.svg" />
                     </button>
                     <button
                         class="round"
@@ -33,7 +26,7 @@
                         v-on:click="buyWish(aWish)"
                         v-bind:class="{
                             unavailable: aWish.bought,
-                            available: !aWish.bought
+                            available: !aWish.bought,
                         }"
                     >
                         <span v-if="aWish.bought">
@@ -58,42 +51,34 @@ export default {
     name: "Wishlist",
     data() {
         return {
-            activeUser: this.$cookie.get("name")
+            activeUser: this.$cookie.get("name"),
         };
     },
     components: {
-        EditDialog
+        EditDialog,
     },
     computed: {
-        users: function() {
+        users: function () {
             return this.$store.state.users;
         },
-        allWishes: function() {
+        allWishes: function () {
             return this.$store.state.allWishes;
-        }
+        },
     },
     methods: {
         getImage(name) {
             return utils.getImage(name);
         },
-        getUserWishes: function(name) {
+        getUserWishes: function (name) {
             var userWishes = [];
-            this.allWishes.forEach(wish => {
+            this.allWishes.forEach((wish) => {
                 if (wish.name === name) {
                     userWishes.push(wish);
                 }
             });
             return sortBy(userWishes, "id");
         },
-        deleteWish: async function(id) {
-            const res = await fetch("/api/wishes/" + id, {
-                method: "DELETE",
-                credentials: "include"
-            });
-            const wishes = await res.json();
-            this.$store.state.allWishes = wishes;
-        },
-        buyWish: async function(wish) {
+        buyWish: async function (wish) {
             console.log("BUY");
             if (!wish.bought || wish.buyer === this.activeUser) {
                 const res = await fetch("/api/wishes/" + wish.id, {
@@ -101,44 +86,43 @@ export default {
                     credentials: "include",
                     body: JSON.stringify({
                         bought: !wish.bought,
-                        buyer: !wish.bought ? this.activeUser : ""
+                        buyer: !wish.bought ? this.activeUser : "",
                     }),
                     headers: {
                         Accept: "application/json",
-                        "Content-Type": "application/json"
-                    }
+                        "Content-Type": "application/json",
+                    },
                 });
                 const wishes = await res.json();
                 this.$store.state.allWishes = wishes;
             }
         },
-        edit: function(wish) {
-            console.log("I am triggered");
+        edit: function (wish) {
             this.$modal.show(
                 EditDialog,
                 {
-                    wish: wish
+                    wish: wish,
                 },
                 {
                     width: "100%",
                     draggable: false,
                     clickToClose: true,
-                    height: "auto"
+                    height: "auto",
                 }
             );
-        }
+        },
     },
-    created: async function() {
+    created: async function () {
         const res_wishes = await this.$http.get("/api/wishes", {
-            credentials: "include"
+            credentials: "include",
         });
         this.$store.state.allWishes = res_wishes.data;
 
         const res_users = await this.$http.get("/api/users", {
-            credentials: "include"
+            credentials: "include",
         });
         this.$store.state.users = sortBy(res_users.data, "id");
-    }
+    },
 };
 </script>
 
@@ -162,8 +146,7 @@ ul {
 li {
     list-style: none;
     text-align: left;
-    margin-left: 0.5em;
-    padding: 0.5em 0;
+    padding: 0.5em;
     clear: both;
     overflow: hidden;
     font-size: 18px;
@@ -171,11 +154,7 @@ li {
 }
 
 span {
-    width: calc(100% - 30px - 0.5em);
-    /*Cut strings that overflow*/
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    flex: 1;
 }
 
 .no-wishes {
@@ -188,20 +167,25 @@ span {
 }
 
 .active {
-    cursor: pointer;
+    border-bottom: dotted rgba(0, 0, 0, 0.2) 2px;
 }
 
 .round {
-    background-color: rgba(255, 255, 255, 0.8);
+    /* background-color: rgba(255, 255, 255, 0.8); */
     text-transform: uppercase;
     border: solid 1px black;
-    margin-right: 0.5em;
     border-radius: 100%;
     font-weight: bold;
     font-size: 18px;
     height: 2em;
     width: 2em;
     outline: none;
+}
+
+.edit {
+    background: transparent;
+    border: none;
+    cursor: pointer;
 }
 
 .available {
@@ -222,6 +206,11 @@ span {
     background-color: #001f3f;
     color: hsla(210, 100%, 75%, 1);
 }
+
+#ludwig .active {
+    border-bottom: dotted rgba(255, 255, 255, 0.2) 2px;
+}
+
 #simon {
     background-color: #7fdbff;
 }

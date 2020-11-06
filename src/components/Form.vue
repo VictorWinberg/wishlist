@@ -12,7 +12,7 @@ export default {
     data() {
         return {
             activeUser: this.$cookie.get("name"),
-            newWish: ""
+            newWish: "",
         };
     },
     computed: {
@@ -23,30 +23,30 @@ export default {
             return " Hej "
                 .concat(capitalize(this.activeUser))
                 .concat(", vad önskar du dig?");
-        }
+        },
     },
     methods: {
-        addWish: async function(e) {
+        addWish: async function (e) {
             e.preventDefault();
             if (this.newWish.replace(/ /g, "") != "") {
                 const res = await fetch("/api/wishes/", {
                     method: "POST",
                     body: JSON.stringify({
                         wish: this.newWish,
-                        name: this.activeUser
+                        name: this.activeUser,
                     }),
                     credentials: "include",
                     headers: {
                         Accept: "application/json",
-                        "Content-Type": "application/json"
-                    }
+                        "Content-Type": "application/json",
+                    },
                 });
                 const wishes = await res.json();
                 this.$store.state.allWishes = wishes;
                 this.newWish = "";
             }
-        }
-    }
+        },
+    },
 };
 </script>
 
@@ -59,7 +59,7 @@ form {
     color: #515155;
     font-size: 20px;
     font-family: "Avenir", Helvetica, Arial, sans-serif;
-    padding: 0.5em;
+    margin: 0.5em;
 }
 
 input[type="text"] {

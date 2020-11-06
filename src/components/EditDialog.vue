@@ -1,17 +1,21 @@
 <template>
     <main>
-        <h1>Ändra önskning</h1>
+        <div class="closeBtn" v-on:click="close()">
+            <img id="close" src="../assets/cross.svg" />
+        </div>
+        <h1>Hantera önskning</h1>
         <form>
             <input type="text" ref="input" v-model="editWish" />
-            <span class="btns">
-                <input
-                    id="save"
-                    type="button"
-                    v-on:click="save()"
-                    value="spara"
-                />
-                <input type="button" v-on:click="close()" value="avbryt" />
-            </span>
+            <div class="btns">
+                <div class="button remove" v-on:click="remove()">
+                    <div class="button-text">ta bort</div>
+                    <img class="icon remove-icon" src="../assets/delete.svg" />
+                </div>
+                <div class="button save" v-on:click="save()">
+                    <div class="button-text">spara</div>
+                    <img class="icon save-icon" src="../assets/save.svg" />
+                </div>
+            </div>
         </form>
     </main>
 </template>
@@ -22,39 +26,67 @@ export default {
     props: ["wish"],
     data() {
         return {
-            editWish: this.wish.wish
+            editWish: this.wish.wish,
         };
     },
     methods: {
-        close: function() {
+        close: function () {
             this.$emit("close");
         },
-        save: async function() {
+        save: async function () {
             const res = await fetch("/api/wishes/" + this.wish.id, {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({
-                    wish: this.editWish
+                    wish: this.editWish,
                 }),
                 headers: {
                     Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
+                    "Content-Type": "application/json",
+                },
             });
             const wishes = await res.json();
             this.$store.state.allWishes = wishes;
             this.close();
-        }
+        },
+        remove: async function () {
+            const res = await fetch("/api/wishes/" + this.wish.id, {
+                method: "DELETE",
+                credentials: "include",
+            });
+            const wishes = await res.json();
+            this.$store.state.allWishes = wishes;
+            this.close();
+        },
     },
-    mounted: function() {
+    mounted: function () {
         this.$refs.input.focus();
-    }
+    },
 };
 </script>
 
 <style scoped>
 main {
-    margin: 0.5em;
+    padding: 1em;
+}
+
+.closeBtn {
+    position: absolute;
+    top: -15px;
+    right: 0;
+    border: solid black 1px;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+#close {
+    height: 20px;
+    width: 20px;
 }
 
 h1 {
@@ -64,7 +96,7 @@ h1 {
 }
 
 .btns {
-    font-size: 0;
+    display: flex;
 }
 
 input {
@@ -82,24 +114,54 @@ input[type="text"] {
     padding: 0.2em;
 }
 
-input[type="text"]:focus {
+.button:focus {
     outline-color: #4db3ff;
 }
 
-input[type="button"] {
-    text-transform: uppercase;
-    width: calc(50% - 0.25em);
-    border: 0;
-    padding: 10px 18px;
+.button {
+    display: flex;
+    flex: 1;
     cursor: pointer;
-    color: #fff;
     box-shadow: 0 4px 8px rgba(32, 160, 255, 0.3);
-    background: #4db3ff;
+    border: solid 2px;
     font-weight: 600;
     border-radius: 3px;
 }
 
-#save {
-    margin-right: 0.5em;
+.button-text {
+    flex: 1;
+    text-align: center;
+    text-transform: uppercase;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.save {
+    margin-left: 0.5em;
+}
+
+.save {
+    margin-left: 0.5em;
+    border-color: #2ecc40;
+}
+
+.remove {
+    border-color: #ff4136;
+}
+
+.icon.remove-icon {
+    height: 20px;
+    width: 20px;
+    padding: 10px;
+    background-color: #ff4136cc;
+}
+
+.icon.save-icon {
+    height: 20px;
+    width: 20px;
+    padding: 10px;
+    background-color: #2ecc40cc;
 }
 </style>
