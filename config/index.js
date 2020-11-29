@@ -12,12 +12,11 @@ module.exports = {
     proxyTable: {
       // proxy all requests starting with /api to server
       "/api": {
-        target: "http://localhost:3008",
-        changeOrigin: true
+        target: "http://localhost:3008"
       },
       "/auth": {
-        target: "ttp://localhost:3008",
-        changeOrigin: true
+        target: "http://localhost:3008",
+        changeOrigin: false
       }
     },
 
