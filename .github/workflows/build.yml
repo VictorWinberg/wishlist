@@ -17,9 +17,9 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -27,9 +27,11 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Build
-        run: npm run build
+        run: |
+          mkdir -p static
+          npm run build
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist
@@ -41,11 +43,11 @@ jobs:
     if: ${{ github.event_name == 'push' }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: '0'
           ref: 'master'
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
