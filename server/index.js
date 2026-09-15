@@ -43,4 +43,6 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "..", "dist", "index.html"));
 });
 
-app.listen(3008, () => console.log("App is up and running!"));
+const PORT = process.env.PORT || 3008;
+
+app.listen(PORT, () => console.log(`App is up and running on port ${PORT}!`));
