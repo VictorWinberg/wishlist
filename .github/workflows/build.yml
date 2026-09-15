@@ -27,9 +27,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Build
-        run: |
-          mkdir -p static
-          npm run build
+        run: npm run build
 
       - uses: actions/upload-artifact@v4
         with:

@@ -10,7 +10,6 @@ COPY config/ config/
 COPY src/ src/
 COPY index.html .babelrc .postcssrc.js ./
 ENV NODE_OPTIONS=--openssl-legacy-provider
-RUN mkdir -p static
 RUN npm run build
 
 FROM node:22-alpine
